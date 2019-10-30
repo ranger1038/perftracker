@@ -40,6 +40,8 @@ urlpatterns = [
         views.pt_comparison_tables_info_json),
     url(r'^api/v(?P<api_ver>\d+.\d+)/(?P<project_id>\d+)/comparison/(?P<cmp_id>\d+)/analyze$',
         views.pt_comparison_analyze_json),
+    url(r'^api/v(?P<api_ver>\d+.\d+)/(?P<project_id>\d+)/comparison/(?P<cmp_id>\d+)/temp_url$',
+        views.pt_comparison_playground),
     url(r'^api/v(?P<api_ver>\d+.\d+)/(?P<project_id>\d+)/comparison/(?P<cmp_id>\d+)/group/(?P<group_id>\d+)/section/(?P<section_id>\d+)/properties$',
         views.pt_comparison_section_properties),
     url(r'^api/v(?P<api_ver>\d+.\d+)/(?P<project_id>\d+)/comparison/(?P<cmp_id>\d+)/group/$', views.pt_comparison_group_all_json),

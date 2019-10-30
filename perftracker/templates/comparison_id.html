@@ -32,6 +32,7 @@
   <a onclick="hide_all_tables()">Hide tables</a>
   <a id="analyze_button" onclick="pt_charts_analyze()">Analyze</a>
   <a onclick="pt_label_data()">Label data</a>
+  <a onclick="pt_send_info()">Send info</a>
 </span>
 
 <div id="main_content_container"></div>
@@ -268,6 +269,31 @@ function pt_save_serie_properties(s_id) {
 function pt_hide_survey(s_id) {
     $(`#survey_${s_id}`).hide('fast');
     $(`#survey_label_${s_id}`).show('fast');
+}
+
+function pt_send_info() {
+    var payload = {};
+    Object.keys(sect_data).map(s_id => {
+        payload[s_id] = {
+            serie: sect_data[s_id].series[0].data,
+            less_better: sect_data[s_id].series[0].less_better,
+        };
+    });
+    console.log(Object.keys(payload).length);
+
+    $.ajax({
+        url: api_root + "/temp_url",
+        contentType: "application/json",
+        data: JSON.stringify(payload),
+        type: 'POST',
+        timeout: 10000,
+        success: function (response) {
+            console.log(response);
+        },
+        error: function (data, status, error) {
+            console.log(error);
+        }
+    });
 }
 
 function pt_label_data() {

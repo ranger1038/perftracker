@@ -157,6 +157,46 @@ def pt_comparison_tables_info_json(request, api_ver, project_id, cmp_id, group_i
 
 
 @csrf_exempt
+def pt_comparison_playground(request, api_ver, project_id, cmp_id):
+    try:
+        data = json.loads(request.body.decode("utf-8"))
+    except json.JSONDecodeError:
+        return HttpResponseBadRequest("Wrong json")
+
+    import csv
+    with open('playground_dataset.csv', 'a') as csv_file:
+        writer = csv.DictWriter(csv_file, fieldnames=['s_id', 'data', 'fails', 'less_better'])
+
+        if csv_file.tell() == 0:
+            writer.writeheader()
+
+        keys_in_file = set()
+
+        for key, value in data.items():
+
+            if key in keys_in_file:
+                continue
+            else:
+                keys_in_file.add(key)
+
+            try:
+                formatted_data, fails, less_better = TrainDataModel.pt_format_data(value)
+                writer.writerow({
+                    's_id': key,
+                    'data': formatted_data,
+                    'fails': int(bool(fails)),
+                    'less_better': less_better,
+                })
+            except (TypeError, ValueError):
+                continue
+            except Exception as e:
+                print(type(e).__name__)
+                continue
+
+    return JsonResponse({}, safe=False)
+
+
+@csrf_exempt
 def pt_comparison_section_properties(request, api_ver, project_id, cmp_id, group_id, section_id):
     try:
         job_id = ComparisonModel.objects.get(pk=cmp_id).pt_get_jobs()[0].id
